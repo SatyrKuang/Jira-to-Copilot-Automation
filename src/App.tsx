@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import Login from './components/Login'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [showLogin, setShowLogin] = useState(false)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -28,14 +30,26 @@ function App() {
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <button 
             onClick={() => setCount((count) => count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors mr-4"
           >
             count is {count}
+          </button>
+          <button 
+            onClick={() => setShowLogin(!showLogin)}
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+          >
+            {showLogin ? 'Hide Login' : 'Show Login Demo'}
           </button>
           <p className="mt-4 text-gray-500">
             Edit <code className="bg-gray-100 px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
           </p>
         </div>
+        
+        {showLogin && (
+          <div className="mb-8">
+            <Login onLoginSuccess={() => setShowLogin(false)} />
+          </div>
+        )}
         
         <p className="text-sm text-gray-500">
           Click on the Vite and React logos to learn more

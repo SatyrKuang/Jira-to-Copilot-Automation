@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Rate Limiting Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        .danger { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .code {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-family: monospace;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🛡️ Login Rate Limiting Demo</h1>
+        <p>This demo shows how the rate limiting system prevents brute-force attacks:</p>
+        
+        <div class="code">
+            <strong>Configuration:</strong><br>
+            • Maximum attempts: 5<br>
+            • Lockout duration: 15 minutes<br>
+            • Storage: localStorage (persistent across browser sessions)
+        </div>
+
+        <div id="status" class="status success">
+            <strong>Status:</strong> Ready to test (5/5 attempts remaining)
+        </div>
+
+        <h3>Test Actions:</h3>
+        <button onclick="simulateFailedLogin()">Simulate Failed Login</button>
+        <button onclick="simulateSuccessfulLogin()">Simulate Successful Login</button>
+        <button onclick="checkStatus()">Check Status</button>
+        <button onclick="resetRateLimit()">Reset Rate Limiter</button>
+
+        <h3>How it works:</h3>
+        <ol>
+            <li>Click "Simulate Failed Login" multiple times to trigger rate limiting</li>
+            <li>After 5 failed attempts, the system will lock you out for 15 minutes</li>
+            <li>During lockout, a countdown timer shows remaining time</li>
+            <li>Successful login resets the counter</li>
+            <li>Data persists across browser sessions using localStorage</li>
+        </ol>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // Simplified rate limiter for demo
+        const MAX_ATTEMPTS = 5;
+        const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+        const STORAGE_KEY = 'loginAttempts';
+
+        function getStoredAttempts() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : null;
+        }
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            const stored = getStoredAttempts();
+            
+            if (!stored) {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '<strong>Status:</strong> Ready to test (5/5 attempts remaining)';
+                return;
+            }
+
+            const now = Date.now();
+            const timeSinceLastAttempt = now - stored.timestamp;
+            
+            if (timeSinceLastAttempt > LOCKOUT_DURATION) {
+                localStorage.removeItem(STORAGE_KEY);
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '<strong>Status:</strong> Lockout period expired - Reset to 5/5 attempts';
+                return;
+            }
+
+            const remaining = MAX_ATTEMPTS - stored.attempts;
+            
+            if (stored.attempts >= MAX_ATTEMPTS) {
+                const timeLeft = LOCKOUT_DURATION - timeSinceLastAttempt;
+                const minutesLeft = Math.ceil(timeLeft / 60000);
+                statusDiv.className = 'status danger';
+                statusDiv.innerHTML = `<strong>Status:</strong> 🔒 LOCKED OUT - ${minutesLeft} minutes remaining`;
+            } else {
+                statusDiv.className = 'status warning';
+                statusDiv.innerHTML = `<strong>Status:</strong> ⚠️ ${remaining}/${MAX_ATTEMPTS} attempts remaining`;
+            }
+        }
+
+        function simulateFailedLogin() {
+            const stored = getStoredAttempts();
+            const now = Date.now();
+            
+            let attempts;
+            if (stored) {
+                const timeSinceLastAttempt = now - stored.timestamp;
+                if (timeSinceLastAttempt > LOCKOUT_DURATION) {
+                    attempts = { timestamp: now, attempts: 1 };
+                } else {
+                    attempts = { timestamp: now, attempts: stored.attempts + 1 };
+                }
+            } else {
+                attempts = { timestamp: now, attempts: 1 };
+            }
+
+            // Check if already locked
+            if (stored && stored.attempts >= MAX_ATTEMPTS && (now - stored.timestamp) < LOCKOUT_DURATION) {
+                log('❌ Login blocked - Account is locked');
+                return;
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(attempts));
+            log(`❌ Failed login attempt #${attempts.attempts}`);
+            updateStatus();
+        }
+
+        function simulateSuccessfulLogin() {
+            const stored = getStoredAttempts();
+            
+            // Check if locked
+            if (stored && stored.attempts >= MAX_ATTEMPTS && (Date.now() - stored.timestamp) < LOCKOUT_DURATION) {
+                log('❌ Login blocked - Account is locked');
+                return;
+            }
+
+            localStorage.removeItem(STORAGE_KEY);
+            log('✅ Successful login - Rate limiter reset');
+            updateStatus();
+        }
+
+        function checkStatus() {
+            updateStatus();
+            const stored = getStoredAttempts();
+            if (stored) {
+                log(`📊 Current attempts: ${stored.attempts}/${MAX_ATTEMPTS}`);
+            } else {
+                log('📊 No failed attempts recorded');
+            }
+        }
+
+        function resetRateLimit() {
+            localStorage.removeItem(STORAGE_KEY);
+            log('🔄 Rate limiter manually reset');
+            updateStatus();
+        }
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML = `<div style="margin: 5px 0; padding: 5px; background: #f8f9fa; border-radius: 3px;">[${timestamp}] ${message}</div>` + logDiv.innerHTML;
+        }
+
+        // Update status every second to show countdown
+        setInterval(updateStatus, 1000);
+        updateStatus();
+    </script>
+</body>
+</html>

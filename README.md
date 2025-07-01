@@ -58,6 +58,30 @@ npm run lint
 - 🎨 Tailwind CSS for styling
 - 📱 Responsive design
 - 🔧 Modern development tooling
+- 🛡️ **Login Rate Limiting** - Prevents brute-force attacks with configurable attempt limits and lockout periods
+
+## 🔒 Security Features
+
+### Login Rate Limiting
+
+The application includes a robust rate limiting system to prevent brute-force attacks on login attempts:
+
+**Features:**
+- Configurable maximum attempts before lockout (default: 5 attempts)
+- Configurable lockout duration (default: 15 minutes)
+- Persistent storage across browser sessions using localStorage
+- Real-time countdown during lockout period
+- Automatic reset after lockout expires
+- Manual reset on successful login
+
+**Usage:**
+1. Click "Show Login Demo" in the main application
+2. Try entering incorrect credentials multiple times
+3. After 5 failed attempts, the account will be locked for 15 minutes
+4. Use demo credentials (username: `demo`, password: `password`) to test successful login
+
+**Demo:**
+Open `demo/rate-limiting-demo.html` in your browser for an interactive demonstration of the rate limiting functionality.
 
 ## 🤝 Contributing
 
