@@ -21,6 +21,13 @@ function App() {
           Jira to Copilot Automation
         </h1>
         
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
+          <h2 className="text-lg font-semibold text-green-800 mb-2">✅ Test Issue Resolved</h2>
+          <p className="text-sm text-green-700">
+            This addresses the test issue created for Copilot assignment demonstration.
+          </p>
+        </div>
+        
         <p className="text-lg text-gray-600 mb-8">
           Built with Vite + React + TypeScript + Tailwind CSS
         </p>
