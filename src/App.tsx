@@ -21,9 +21,24 @@ function App() {
           Jira to Copilot Automation
         </h1>
         
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-lg text-gray-600 mb-4">
           Built with Vite + React + TypeScript + Tailwind CSS
         </p>
+        
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
+          <div className="flex items-center justify-center mb-2">
+            <svg className="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <h2 className="text-lg font-semibold text-green-800">Test Issue Processed Successfully</h2>
+          </div>
+          <p className="text-green-700 text-sm">
+            ✅ Jira-to-Copilot automation is working correctly
+          </p>
+          <p className="text-green-600 text-xs mt-1">
+            Issue #9 - Test Issue completed by GitHub Copilot
+          </p>
+        </div>
         
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <button 
