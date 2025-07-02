@@ -58,6 +58,7 @@ npm run lint
 - 🎨 Tailwind CSS for styling
 - 📱 Responsive design
 - 🔧 Modern development tooling
+- 🔢 Interactive counter with increment and reset functionality
 
 ## 🤝 Contributing
 

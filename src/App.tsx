@@ -26,12 +26,20 @@ function App() {
         </p>
         
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <button 
-            onClick={() => setCount((count) => count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-          >
-            count is {count}
-          </button>
+          <div className="flex gap-4 justify-center mb-4">
+            <button 
+              onClick={() => setCount((count) => count + 1)}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              count is {count}
+            </button>
+            <button 
+              onClick={() => setCount(0)}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Reset
+            </button>
+          </div>
           <p className="mt-4 text-gray-500">
             Edit <code className="bg-gray-100 px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
           </p>
