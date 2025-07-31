@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import LanguageDropdown from './components/LanguageDropdown'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,8 +19,13 @@ function App() {
         </div>
         
         <h1 className="text-4xl font-bold text-gray-800 mb-8">
-          Jira to Copilot Automation
+          MGC-Lobby
         </h1>
+        
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3">Select Language</h2>
+          <LanguageDropdown />
+        </div>
         
         <p className="text-lg text-gray-600 mb-8">
           Built with Vite + React + TypeScript + Tailwind CSS
